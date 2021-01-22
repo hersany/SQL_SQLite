@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="/home/navarra/Desktop/SQL/Ex_Files_SQL_Code_Challenges/Exercise Files/Ch01/restaurant.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1566"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Customers" custom_title="0" dock_id="1" table="4,9:mainCustomers"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011000ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="" name="" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths/><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Customers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="90"/><column index="2" value="96"/><column index="3" value="91"/><column index="4" value="245"/><column index="5" value="203"/><column index="6" value="118"/><column index="7" value="44"/><column index="9" value="83"/><column index="10" value="98"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">-- FirstName, LastName, Email with alphabetical order by last name
+
+SELECT FirstName, LastName, Email
+FROM Customers
+ORDER BY LastName
+
+-- Create a basic table for CustomerID, PartySize
+
+CREATE TABLE Attendees 
+('CustomerID'INT,
+'PartySize' INT
+)
+
+-- Create different menus
+
+SELECT *
+FROM Dishes
+ORDER BY Price
+
+SELECT *
+FROM Dishes
+WHERE Type in ('Appetizer', 'Beverage')
+ORDER BY Type
+
+SELECT *
+FROM Dishes
+WHERE Type &lt;&gt; 'Beverage'
+ORDER BY Type
+
+-- Insert new customers info. it creates unique CustomerID
+
+INSERT INTO Customers (FirstName, LastName, Email, Address, City, State, Phone, Birthday)
+VALUES('Anna', 'Smith', 'asmith@kinetecoinc.com', '479 Lapis Dr.', 'Memphis', 'TN', '(555) 555-1212', '1973-07-21')
+
+SELECT *
+FROM Customers
+ORDER BY CustomerID DESC
+
+-- Update customer address
+
+SELECT * 
+FROM Customers
+WHERE FirstName = 'Taylor'
+
+UPDATE Customers
+SET Address = '74 Pine St.', City=  'New York', State = 'NY'
+WHERE Address = '27170 6th Center'
+
+-- Remove data from table
+
+SELECT * 
+FROM Customers
+WHERE FirstName = 'Taylor'
+
+
+DELETE FROM Customers
+WHERE CustomerID = 4
+
+-- Log customer response
+
+SELECT * 
+FROM Attendees
+
+INSERT INTO Attendees (CustomerID, PartySize)
+VALUES ((SELECT CustomerID FROM Customers WHERE Email = 'atapley2j@kinetecoinc.com'), 4) 
+
+-- Look up reservations
+
+SELECT *
+FROM Reservations
+
+SELECT c.FirstName, c.LastName, r.Date, r.PartySize
+FROM Reservations AS r
+JOIN Customers AS c
+ON r.CustomerID = c.CustomerID
+WHERE c.LastName like 'Ste%'
+
+-- Take a reservation
+
+SELECT *
+FROM Reservations
+WHERE CustomerID = (SELECT CustomerID FROM Customers WHERE FirstName = 'Sam' AND LastName = 'McAdams')
+
+INSERT INTO Customers (FirstName, LastName, Email, Phone)
+VALUES('Sam', 'McAdams', 'smac@kinetecoinc.com', '(555) 555-1232')
+
+INSERT INTO Reservations (CustomerID, Date, PartySize)
+VALUES('102', '2020-06-14 18:00:00', '5')
+
+-- Take a delivery order
+
+SELECT *
+FROM Customers
+
+SELECT *
+FROM Dishes
+
+SELECT *
+FROM Orders
+
+SELECT *
+FROM OrdersDishes
+
+INSERT INTO Orders (CustomerID, OrderDate)
+VALUES (...., '.........')
+
+INSERT INTO OrdersDishes (OrderID, DıshID)
+VALUES (...., (SELECT DishID FROM Dishes WHERE Name = 'Garden Buffet')),
+(........, (SELECT DishID FROM Dishes WHERE Name = 'Parmesan Deviled Eggs'))
+
+SELECT SUM(Price) AS TotalCost
+FROM Dishes
+WHERE DishID in (1, 6)
+
+SELECT SUM(d.Price)
+FROM Dishes AS d
+JOIN OrdersDishes AS o 
+ON d.DishID = o.DishID
+WHERE o.DishID = 1001
+
+-- Track your customer's favorite dishes
+
+SELECT DishID
+FROM Dishes
+WHERE Name = 'Quinoa Salmon Salad'
+
+SELECT FavoriteDish
+FROM Customers
+WHERE FirstName = 'Cleo'
+
+UPDATE Customers
+SET FavoriteDish = (SELECT DishID FROM Dishes WHERE Name = 'Quinoa Salmon Salad')
+WHERE CustomerID = (SELECT CustomerID FROM Customers WHERE FirstName = 'Cleo')
+
+-- Prepare a report of your top five customers
+
+SELECT *
+FROM Customers
+
+SELECT *
+FROM Orders
+
+SELECT  COUNT(Orders.OrderDate) AS QuantityOrders, Orders.CustomerID, Customers.FirstName, Customers.LastName, Customers.Email
+FROM Orders
+JOIN Customers
+ON Orders.CustomerID = Customers.CustomerID
+GROUP BY Orders.CustomerID
+ORDER BY QuantityOrders DESC
+LIMIT 5</sql><current_tab id="0"/></tab_sql></sqlb_project>
